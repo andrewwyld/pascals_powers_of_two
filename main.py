@@ -1,4 +1,4 @@
-MAX_DEPTH = 32
+MAX_DEPTH = 1024
 
 
 def pascal_value_for(row, i):
@@ -14,22 +14,24 @@ def pascal(row):
 
 
 def print_sum(row, i):
-    output = f"{row[0]}"
+    output = f" = {row[0]}"
     for j in range(1, i):
         output += f" + {row[j]}"
     return output
 
 
-def find_powers_of_two(row):
-    power_found = False
-    powers = []
-    total = row[0]  # ignore 1 = 2⁰
-    for i in range(1, len(row) - 1):  # also ignore entire row sum
-        total += row[i]
-        if bin(total).count("1") == 1:
-            power_found = True
-            powers.append((i + 1, (print_sum(row, i + 1))))  # correct for zero indexing
-    return power_found, powers
+def find_powers_of_two(row, limit=None):
+    _power_found = False
+    _powers = []
+    _total = row[0]  # ignore 1 = 2⁰
+    _limit = len(row) - 1
+    _limit = min(_limit, limit) if limit else _limit  # we prefer working code to comprehensive documentation
+    for i in range(1, _limit):  # also ignore entire row sum
+        _total += row[i]
+        if bin(_total).count("1") == 1:
+            _power_found = True
+            _powers.append((i + 1, _total, (print_sum(row, i + 1))))  # correct for zero indexing
+    return _power_found, _powers
 
 
 if __name__ == '__main__':
@@ -38,11 +40,11 @@ if __name__ == '__main__':
     powers_list = []
     for i in range(MAX_DEPTH):
         row = pascal(row)
-        power_found, powers = find_powers_of_two(row)
+        power_found, powers = find_powers_of_two(row, 32)
         if power_found:
             powers_by_row[i] = powers
             for power in powers:
                 powers_list.append((i, power))
 
     for power in powers_list:
-        print(f"{power[0]}\t{power[1][0]}\t{power[1][1]}")
+        print(f"{power[0]}\t{power[1][0]}\t{power[1][1]}\t{power[1][2]}")
